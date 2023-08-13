@@ -1,6 +1,8 @@
+// import { useState } from "react";
 import "./pico.css";
 
 export default function App() {
+  // const [newItem, setNewItem] = useState("");
   return (
     <main className="container">
       <form>
@@ -13,7 +15,7 @@ export default function App() {
             placeholder="Do the Laundry"
           />
         </label>
-        <button>Add</button>
+        <button style={{ width: "4rem" }}>Add</button>
       </form>
       <h4>Todo List</h4>
       <div style={{ display: "flex", alignItems: "center" }}>
