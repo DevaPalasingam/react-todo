@@ -1,38 +1,76 @@
-// import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./pico.css";
+import { NewTodoForm } from "./NewTodoForm";
+import { TodoList } from "./TodoList";
+
+export interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+}
 
 export default function App() {
-  // const [newItem, setNewItem] = useState("");
+  const [todos, setTodos] = useState(() => {
+    const localValue = localStorage.getItem("ITEMS");
+    if (localValue == null) return [];
+
+    return JSON.parse(localValue);
+  });
+
+  useEffect(() => {
+    localStorage.setItem("ITEMS", JSON.stringify(todos));
+  }, [todos]);
+
+  function toggleTodo(id: string, completed: boolean) {
+    setTodos((currentTodos: Todo[]) => {
+      return currentTodos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, completed };
+        }
+        return todo;
+      });
+    });
+  }
+
+  function addTodo(title: string) {
+    setTodos((currentTodos: Todo[]) => {
+      return [
+        ...currentTodos,
+        {
+          id: crypto.randomUUID(),
+          title,
+          completed: false,
+        },
+      ];
+    });
+  }
+
+  function deleteTodo(id: string) {
+    setTodos((currentTodos: Todo[]) => {
+      return currentTodos.filter((todo) => todo.id !== id);
+    });
+  }
+
+  function clearAll() {
+    setTodos(() => {
+      return [];
+    });
+  }
+
   return (
     <main className="container">
-      <form>
-        <label htmlFor="todoItem">
-          Insert Todo
-          <input
-            type="text"
-            id="todoItem"
-            name="todoItem"
-            placeholder="Do the Laundry"
-          />
-        </label>
-        <button style={{ width: "4rem" }}>Add</button>
-      </form>
+      <NewTodoForm onSubmit={addTodo} />
       <h4>Todo List</h4>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <input type="checkbox" />
-        <span style={{ marginRight: "1rem" }}>Item 1</span>
+      <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+      {todos.length > 0 && (
         <button
-          className="contrast outline"
-          style={{
-            width: "7rem",
-            alignSelf: "baseline",
-            padding: 0,
-            margin: 0,
-          }}
+          onClick={() => clearAll()}
+          style={{ width: "9rem" }}
+          className="contrast"
         >
-          Delete
+          Clear All
         </button>
-      </div>
+      )}
     </main>
   );
 }
