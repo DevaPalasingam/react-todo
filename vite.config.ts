@@ -5,7 +5,4 @@ import react from "@vitejs/plugin-react-swc";
 export default defineConfig({
   base: "./react-todo",
   plugins: [react()],
-  build: {
-    outDir: "build",
-  },
 });
